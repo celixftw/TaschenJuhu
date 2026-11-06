@@ -1,0 +1,8 @@
+## Interface: 16001
+## Title: TaschenJuhu
+## Notes: Wenn dir eine Tasche droppt: froehlicher Juhu-Sound und ein kurzer goldener Bildschirm-Blitz. /juhu
+## Author: Niki
+## Version: 1.0
+## SavedVariables: TaschenJuhuDB
+
+TaschenJuhu.lua
