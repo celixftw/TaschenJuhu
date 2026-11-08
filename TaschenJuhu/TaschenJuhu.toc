@@ -1,8 +1,8 @@
 ## Interface: 16001
 ## Title: TaschenJuhu
-## Notes: Wenn dir eine Tasche droppt: froehlicher Juhu-Sound und ein kurzer goldener Bildschirm-Blitz. /juhu
+## Notes: Wenn dir eine Tasche oder ein seltenes (blaues) Item droppt: froehlicher Juhu-Sound und ein kurzer goldener Bildschirm-Blitz. /juhu
 ## Author: Niki
-## Version: 1.0
+## Version: 1.1
 ## SavedVariables: TaschenJuhuDB
 
 TaschenJuhu.lua

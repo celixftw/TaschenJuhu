@@ -1,5 +1,5 @@
 -- TaschenJuhu
--- When you loot a bag: a happy sound ("Juhu!") and a short golden flash of the screen.
+-- When you loot a bag or a rare (blue or better) item: a happy sound ("Juhu!") and a short golden flash of the screen.
 -- Bags are items of the "Container" class. Only your own loot counts (CHAT_MSG_LOOT).
 --
 -- Sound: the level-up fanfare plus "Juhu!" spoken by the game's text to speech. If a file
@@ -120,6 +120,21 @@ local function IsBag(link)
 	return classID == Enum.ItemClass.Container
 end
 
+-- Rare (blue) or better. The quality comes from the item data, or from the link colour while the
+-- item is not cached yet.
+local RARE = (Enum.ItemQuality and Enum.ItemQuality.Rare) or 3
+local LINK_QUALITY = { ["0070dd"] = 3, ["a335ee"] = 4, ["ff8000"] = 5, ["e6cc80"] = 6, ["00ccff"] = 7 }
+local function IsRare(link, text)
+	local quality = C_Item.GetItemQualityByID and C_Item.GetItemQualityByID(link)
+	if not quality then
+		-- Newer clients colour links as |cnIQ3:...; older ones as |cff0070dd.
+		quality = tonumber(text:match("|cnIQ(%d+):") or "")
+		local color = not quality and text:match("|c%x%x(%x%x%x%x%x%x)|Hitem:")
+		quality = quality or (color and LINK_QUALITY[color:lower()])
+	end
+	return quality ~= nil and quality >= RARE
+end
+
 local events = CreateFrame("Frame")
 events:RegisterEvent("ADDON_LOADED")
 events:SetScript("OnEvent", function(self, event, ...)
@@ -130,6 +145,7 @@ events:SetScript("OnEvent", function(self, event, ...)
 		db = TaschenJuhuDB
 		if db.voice == nil then db.voice = true end
 		if db.flash == nil then db.flash = true end
+		if db.rare == nil then db.rare = true end
 		self:RegisterEvent("CHAT_MSG_LOOT")
 		if db.testMode then
 			-- So it is not forgotten on.
@@ -142,7 +158,7 @@ events:SetScript("OnEvent", function(self, event, ...)
 		if guid ~= UnitGUID("player") then return end -- only your own loot
 		local link = text:match("(|c%x+|Hitem:.-|h.-|h|r)") or text:match("(|Hitem:.-|h.-|h)")
 		-- Test mode: every looted item counts, to try the real loot detection.
-		if link and (IsBag(link) or db.testMode) then
+		if link and (IsBag(link) or (db.rare and IsRare(link, text)) or db.testMode) then
 			Celebrate()
 		end
 	end
@@ -165,14 +181,17 @@ SlashCmdList.TASCHENJUHU = function(input)
 		db.variant = cmd
 		Print("Halleluja: "..cmd..".")
 		Celebrate()
+	elseif cmd == "selten" then
+		db.rare = not db.rare
+		Print("Seltene Items (blau und besser) "..(db.rare and "lösen auch Juhu aus." or "lösen kein Juhu mehr aus."))
 	elseif cmd == "testmodus" then
 		db.testMode = not db.testMode
 		Print(db.testMode and "|cffff8040Testmodus an|r: jedes Item, das du lootest, löst Juhu aus."
-			or "Testmodus aus: nur noch Taschen lösen Juhu aus.")
+			or "Testmodus aus: nur noch Taschen (und seltene Items) lösen Juhu aus.")
 	elseif cmd == "" or cmd == "test" then
 		Celebrate()
-		Print("Test! /juhu testmodus – jedes Item löst aus, /juhu stimme – Stimme an/aus, /juhu blitz – Blitz an/aus.")
+		Print("Test! /juhu testmodus – jedes Item löst aus, /juhu selten – auch bei blauen Items an/aus, /juhu stimme – Stimme an/aus, /juhu blitz – Blitz an/aus.")
 	else
-		Print("/juhu – einmal testen, /juhu kurz|normal|lang – Halleluja-Länge, /juhu testmodus – jedes Item löst aus, /juhu stimme – Stimme an/aus, /juhu blitz – Blitz an/aus")
+		Print("/juhu – einmal testen, /juhu kurz|normal|lang – Halleluja-Länge, /juhu selten – auch bei seltenen (blauen) Items an/aus, /juhu testmodus – jedes Item löst aus, /juhu stimme – Stimme an/aus, /juhu blitz – Blitz an/aus")
 	end
 end

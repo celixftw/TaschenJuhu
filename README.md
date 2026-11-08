@@ -1,6 +1,6 @@
 # TaschenJuhu
 
-WoW-Forever-Addon: Wenn dir eine **Tasche droppt**, ertönt ein Halleluja-Chor und der Bildschirm blitzt kurz golden auf.
+WoW-Forever-Addon: Wenn dir eine **Tasche** oder ein **seltenes Item** (blau oder besser) **droppt**, ertönt ein Halleluja-Chor und der Bildschirm blitzt kurz golden auf.
 
 ## Installation
 
@@ -12,6 +12,7 @@ WoW-Forever-Addon: Wenn dir eine **Tasche droppt**, ertönt ein Halleluja-Chor u
 
 - `/juhu` – einmal testen
 - `/juhu kurz` / `normal` / `lang` – Länge des Halleluja
+- `/juhu selten` – Juhu auch bei seltenen (blauen) Items an/aus
 - `/juhu blitz` – Bildschirm-Blitz an/aus
 - `/juhu stimme` – Sprachausgabe an/aus
 - `/juhu testmodus` – jedes gelootete Item löst aus (zum Ausprobieren)
